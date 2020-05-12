@@ -1,0 +1,70 @@
+CREATE TABLE sessions (
+    sessionID int(11) NOT NULL AUTO_INCREMENT,
+    ownerID int(11) NOT NULL,
+    title varchar(64) NOT NULL,
+    courseCode varchar(10),
+    sessionDescription text,
+    date date NOT NULL,
+    startTime time NOT NULL,
+    endTime time, 
+    address varchar(128) NOT NULL,
+    room varchar(24),
+    isPrivate varchar(6),
+    latitude varchar(12),
+    longitude varchar(12),
+    PRIMARY KEY (sessionID),
+    FOREIGN KEY (ownerID) REFERENCES users(userID))
+    ENGINE=INNODB;
+
+
+***INSERT VALUES INTO SESSIONS TABLE***
+
+INSERT INTO sessions(sessionID, ownerID, title, courseCode, sessionDescription, date, startTime, endTime, address, room, isPrivate, latitude, longitude)
+VALUES 
+(100, 7, 'CS Study Buddies', 'CSCSI-C291', 'This group is mainly for C291 but feel free to come for other computer science classes!', '2020-04-15', '18:00:00', '20:00:00','700 N Woodlawn Ave Bloomington IN 47408', '4047', 'false', '39.172360', '-86.523570'),
+(101, 3, 'Bio Group', 'BIO-L211', 'Prep for the upcoming exam.', '2020-04-18', '900 E 7th St Bloomington IN 47405', '17:00:00', '19:00:00', 'Starbucks', 'false', '39.168430', '-86.522540'),
+(102, 5, 'Honors Calc', 'MATH-M212', 'Study session for the calc 2 exam. Open to all sections!!', '2020-04-24', '14:30:00', '15:30:00','201 N Rose Ave Bloomington IN 47405
+', 'Education Library', 'false', '39.167671', '-86.510880'),
+(103, 2, 'K201 Support Group', 'BUS-K201', 'Last minute session for the midterm. Share your struggles amongst other students.', '2020-04-31', '15:45:00', '17:30:00','1320 E 10th St Bloomington IN 47405', '5th Floor', 'false', '39.171006', '-86.516804'),
+(104, 1, 'Fun with Orgo', 'CHEM-C341', 'Group study for orgo 1.', '2020-04-20', '12:00:00', '13:00:00','1320 E 10th St Bloomington IN 47405', '4020', 'true', '39.171006', '-86.516804');
+
+
+
+***Insert without sessionID****
+
+INSERT INTO sessions(ownerID, title, courseCode, sessionDescription, date, time, address, room, isPrivate)
+VALUES
+(1, 'BioChem Group', 'BIO-L212', 'Prep for the final exam.', '2020-04-07', '900 E 7th St', '17:00:00', 'Starbucks', 'false');
+
+
+
+CREATE TABLE userSessions (
+    userID int(11) NOT NULL AUTO_INCREMENT,
+    sessionID int(11) NOT NULL,
+    groupID int(11),
+    FOREIGN KEY (userID) REFERENCES users(userID),
+    FOREIGN KEY (sessionID) REFERENCES sessions(sessionID),
+    FOREIGN KEY (groupID) REFERENCES groups(groupID))
+    ENGINE=INNODB;
+
+
+**INSERT INTO userSessions******
+INSERT INTO userSessions(userID, sessionID)
+VALUES(1, 101),
+(1, 102),
+(1, 100),
+(2, 100),
+(3, 100),
+(4, 104),
+(5, 109);
+
+
+
+
+
+*****GET JOINED SESSIONS*****
+Select distinct s.sessionID, s.title from sessions as s, userSessions as us WHERE us.userID = 1 AND s.sessionID = us.sessionID;
+
+
+
+SELECT DISTINCT s.sessionID, s.title, u.firstName, u.lastName FROM sessions as s, userSessions as us, users as u WHERE us.userID = 1 AND s.sessionID = us.sessionID AND s.ownerID = u.userID
